@@ -15,4 +15,6 @@ public interface IngredientRepository extends JpaRepository <Ingredient, Long> {
     Optional<List<Ingredient>> findAllByCategory(String categoryName);
 
     void deleteByName(String name);
+
+    List<Optional<Ingredient>> findAllByNameIn(List<String> usernames);
 }
