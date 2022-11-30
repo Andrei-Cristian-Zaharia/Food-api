@@ -16,6 +16,8 @@ public class RecipeIngredient {
     @Column(name = "id_recipe_ingredient")
     private Long id;
 
+    @Column(name = "quantity")
+    private String quantity;
     @ManyToOne
     @JoinColumn(name = "id_recipe")
     private Recipe recipe;
@@ -24,7 +26,8 @@ public class RecipeIngredient {
     @JoinColumn(name = "id_ingredient")
     private Ingredient ingredient;
 
-    public RecipeIngredient(Recipe recipe, Ingredient ingredient) {
+    public RecipeIngredient(Recipe recipe, Ingredient ingredient, String quantity) {
+        this.quantity = quantity;
         this.recipe = recipe;
         this.ingredient = ingredient;
     }

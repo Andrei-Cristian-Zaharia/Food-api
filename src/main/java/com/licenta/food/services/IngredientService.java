@@ -41,11 +41,9 @@ public class IngredientService {
 
         List<Optional<Ingredient>> ingredients = ingredientRepository.findAllByNameIn(ingredientNames);
 
-        ingredients.forEach((Optional<Ingredient> ingredient) -> {
-            if (ingredient.isEmpty()) {
-                throw new NotFoundException("There are ingredients in this list that are not found !");
-            }
-        });
+        if (ingredientNames.size() != ingredients.size()) {
+            throw new NotFoundException("There are ingredients in this list that are not found !");
+        }
 
         return ingredients.stream().map(Optional::get).toList();
     }

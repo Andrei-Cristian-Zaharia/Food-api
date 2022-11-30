@@ -1,6 +1,5 @@
 package com.licenta.food.models.responseDTO;
 
-import com.licenta.food.models.Ingredient;
 import com.licenta.food.models.Person;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,5 +14,5 @@ public class ResponseRecipeDTO {
     private String description;
     private String howToPrepare;
     private Person person;
-    private List<Ingredient> ingredientList;
+    private List<IngredientOnRecipeResponseDTO> ingredientList;
 }

@@ -23,5 +23,8 @@ public class CreateRecipeDTO {
     private List<String> ingredientNames;
 
     @NotNull
+    private List<String> ingredientQuantities;
+
+    @NotNull
     private String ownerName;
 }
