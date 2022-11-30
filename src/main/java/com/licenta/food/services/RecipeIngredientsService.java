@@ -21,9 +21,10 @@ public class RecipeIngredientsService {
         this.recipeIngredientRepository = recipeIngredientRepository;
     }
 
-    public RecipeIngredient addIngredientToRecipe(Recipe recipe, Ingredient ingredient, String quantity) {
+    public void addIngredientToRecipe(Recipe recipe, Ingredient ingredient,
+                                      Integer quantity, String measurement) {
 
-        return recipeIngredientRepository.save(new RecipeIngredient(recipe, ingredient, quantity));
+        recipeIngredientRepository.save(new RecipeIngredient(recipe, ingredient, quantity, measurement));
     }
 
     public List<IngredientOnRecipeResponseDTO> getIngredientsForRecipe(Long id) {
