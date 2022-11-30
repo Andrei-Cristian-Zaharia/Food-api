@@ -4,5 +4,6 @@ public enum ObjectType {
 
     RECIPE,
     INGREDIENT,
-    PERSON
+    PERSON,
+    MEASUREMENT
 }

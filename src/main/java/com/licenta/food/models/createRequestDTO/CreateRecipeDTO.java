@@ -23,7 +23,10 @@ public class CreateRecipeDTO {
     private List<String> ingredientNames;
 
     @NotNull
-    private List<String> ingredientQuantities;
+    private List<Integer> ingredientQuantities;
+
+    @NotNull
+    private List<String> ingredientMeasurements;
 
     @NotNull
     private String ownerName;

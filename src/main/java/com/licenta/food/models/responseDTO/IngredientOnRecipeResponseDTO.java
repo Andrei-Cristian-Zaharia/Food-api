@@ -13,5 +13,7 @@ public class IngredientOnRecipeResponseDTO {
 
     private String category;
 
-    private String quantity;
+    private Integer quantity;
+
+    private String measurementUnit;
 }

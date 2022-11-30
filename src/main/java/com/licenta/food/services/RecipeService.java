@@ -1,5 +1,6 @@
 package com.licenta.food.services;
 
+import com.licenta.food.enums.MeasurementUnit;
 import com.licenta.food.enums.ObjectType;
 import com.licenta.food.exceptionHandlers.NotFoundException;
 import com.licenta.food.exceptionHandlers.RecipeHandlers.CreateRecipeDifferentSizes;
@@ -37,16 +38,27 @@ public class RecipeService {
         this.modelMapper = modelMapper;
     }
 
-    private void createRecipeIngredientRelations(Recipe recipe, List<String> ingredientNames, List<String> quantity) {
+    private void createRecipeIngredientRelations(Recipe recipe, CreateRecipeDTO createRecipeDTO) {
 
-        if (ingredientNames.size() != quantity.size()) {
+        if (!(createRecipeDTO.getIngredientNames().size() == createRecipeDTO.getIngredientQuantities().size()
+            && createRecipeDTO.getIngredientQuantities().size() == createRecipeDTO.getIngredientMeasurements().size())){
             throw new CreateRecipeDifferentSizes();
         }
 
-        List<Ingredient> ingredients = ingredientService.getAllIngredientsWithNames(ingredientNames);
+        List<Ingredient> ingredients
+                = ingredientService.getAllIngredientsWithNames(createRecipeDTO.getIngredientNames());
 
         for (int i = 0; i < ingredients.size(); i++) {
-            recipeIngredientsService.addIngredientToRecipe(recipe, ingredients.get(i), quantity.get(i));
+            if (!MeasurementUnit.contains(createRecipeDTO.getIngredientMeasurements().get(i))) {
+                throw new NotFoundException(ObjectType.MEASUREMENT, createRecipeDTO.getIngredientMeasurements().get(i));
+            }
+
+            recipeIngredientsService.addIngredientToRecipe(
+                    recipe,
+                    ingredients.get(i),
+                    createRecipeDTO.getIngredientQuantities().get(i),
+                    createRecipeDTO.getIngredientMeasurements().get(i)
+            );
         }
     }
 
@@ -99,10 +111,7 @@ public class RecipeService {
         recipe.setPerson(personService.getPersonByName(createRecipeDTO.getOwnerName()));
         recipe = recipeRepository.save(recipe);
 
-        createRecipeIngredientRelations(recipe,
-                createRecipeDTO.getIngredientNames(),
-                createRecipeDTO.getIngredientQuantities()
-        );
+        createRecipeIngredientRelations(recipe, createRecipeDTO);
 
         return recipe;
     }

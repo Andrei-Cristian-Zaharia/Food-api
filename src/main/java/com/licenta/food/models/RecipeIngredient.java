@@ -1,6 +1,5 @@
 package com.licenta.food.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,7 +16,11 @@ public class RecipeIngredient {
     private Long id;
 
     @Column(name = "quantity")
-    private String quantity;
+    private Integer quantity;
+
+    @Column(name = "measurement_unit")
+    private String measurementUnit;
+
     @ManyToOne
     @JoinColumn(name = "id_recipe")
     private Recipe recipe;
@@ -26,7 +29,8 @@ public class RecipeIngredient {
     @JoinColumn(name = "id_ingredient")
     private Ingredient ingredient;
 
-    public RecipeIngredient(Recipe recipe, Ingredient ingredient, String quantity) {
+    public RecipeIngredient(Recipe recipe, Ingredient ingredient, Integer quantity, String measurementUnit) {
+        this.measurementUnit = measurementUnit;
         this.quantity = quantity;
         this.recipe = recipe;
         this.ingredient = ingredient;
