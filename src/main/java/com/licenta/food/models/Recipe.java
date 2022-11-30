@@ -19,8 +19,10 @@ public class Recipe {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "howToPrepare")
+    @Column(name = "howtoprepare")
     private String howToPrepare;
 
-
+    @OneToOne
+    @JoinColumn(name = "id_person")
+    private Person person;
 }

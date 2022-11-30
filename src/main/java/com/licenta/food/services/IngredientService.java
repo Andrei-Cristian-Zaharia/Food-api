@@ -1,5 +1,6 @@
 package com.licenta.food.services;
 
+import com.licenta.food.enums.ObjectType;
 import com.licenta.food.exceptionHandlers.AlreadyExistsException;
 import com.licenta.food.exceptionHandlers.NotFoundException;
 import com.licenta.food.models.createRequestDTO.CreateIngredientRequest;
@@ -24,7 +25,7 @@ public class IngredientService {
 
         Optional<Ingredient> ingredient = ingredientRepository.findByName(name);
 
-        return ingredient.orElseThrow(() -> new NotFoundException("Ingredient " + name + " was not found !"));
+        return ingredient.orElseThrow(() -> new NotFoundException(ObjectType.INGREDIENT, name));
     }
 
     public List<Ingredient> getIngredientsByCategory(String categoryName) {
@@ -34,6 +35,19 @@ public class IngredientService {
         return ingredientList.orElseThrow(() ->
                 new NotFoundException("Ingredients for category " + categoryName + " was not found !")
         );
+    }
+
+    public List<Ingredient> getAllIngredientsWithNames(List<String> ingredientNames) {
+
+        List<Optional<Ingredient>> ingredients = ingredientRepository.findAllByNameIn(ingredientNames);
+
+        ingredients.forEach((Optional<Ingredient> ingredient) -> {
+            if (ingredient.isEmpty()) {
+                throw new NotFoundException("There are ingredients in this list that are not found !");
+            }
+        });
+
+        return ingredients.stream().map(Optional::get).toList();
     }
 
     public List<Ingredient> getAllIngredients() {
