@@ -2,6 +2,7 @@ package com.licenta.food.services;
 
 import com.licenta.food.enums.ObjectType;
 import com.licenta.food.exceptionHandlers.NotFoundException;
+import com.licenta.food.exceptionHandlers.RecipeHandlers.CreateRecipeDifferentSizes;
 import com.licenta.food.models.*;
 import com.licenta.food.models.createRequestDTO.CreateRecipeDTO;
 import com.licenta.food.models.responseDTO.ResponseRecipeDTO;
@@ -10,9 +11,7 @@ import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 @Service
@@ -38,10 +37,17 @@ public class RecipeService {
         this.modelMapper = modelMapper;
     }
 
-    private void createRecipeIngredientRelations(Recipe recipe, List<String> ingredientNames) {
+    private void createRecipeIngredientRelations(Recipe recipe, List<String> ingredientNames, List<String> quantity) {
+
+        if (ingredientNames.size() != quantity.size()) {
+            throw new CreateRecipeDifferentSizes();
+        }
+
         List<Ingredient> ingredients = ingredientService.getAllIngredientsWithNames(ingredientNames);
 
-        ingredients.forEach((Ingredient ing) -> recipeIngredientsService.addIngredientToRecipe(recipe, ing));
+        for (int i = 0; i < ingredients.size(); i++) {
+            recipeIngredientsService.addIngredientToRecipe(recipe, ingredients.get(i), quantity.get(i));
+        }
     }
 
     public ResponseRecipeDTO getRecipeByName(String name) {
@@ -93,7 +99,10 @@ public class RecipeService {
         recipe.setPerson(personService.getPersonByName(createRecipeDTO.getOwnerName()));
         recipe = recipeRepository.save(recipe);
 
-        createRecipeIngredientRelations(recipe, createRecipeDTO.getIngredientNames());
+        createRecipeIngredientRelations(recipe,
+                createRecipeDTO.getIngredientNames(),
+                createRecipeDTO.getIngredientQuantities()
+        );
 
         return recipe;
     }
