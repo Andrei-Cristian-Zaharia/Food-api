@@ -9,3 +9,8 @@ server:
     port: 3000
     servlet:
         context-path: /v1/food-api
+
+food:
+    user-paths:
+        - "/recipe/delete"
+        - "/recipe"
