@@ -27,7 +27,7 @@ public class RecipeController {
         return ResponseEntity.status(HttpStatus.CREATED).body(recipe);
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/id/{id}")
     public @ResponseBody ResponseEntity<ResponseRecipeDTO> getRecipeById(@PathVariable Long id) {
         ResponseRecipeDTO result = recipeService.getRecipeById(id);
 
@@ -48,8 +48,8 @@ public class RecipeController {
         return ResponseEntity.ok().body(recipes);
     }
 
-    @DeleteMapping("{id}")
-    public ResponseEntity<String> deleteById(@PathVariable Long id) {
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteById(@RequestParam Long id) {
         recipeService.deleteRecipe(id);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Recipe with id " + id + " was deleted.");

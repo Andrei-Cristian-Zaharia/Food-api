@@ -38,6 +38,7 @@ public class RecipeIngredientsService {
                     );
 
                     ingredient.setQuantity(ri.getQuantity());
+                    ingredient.setMeasurementUnit(ri.getMeasurementUnit());
 
                     return ingredient;
                 })

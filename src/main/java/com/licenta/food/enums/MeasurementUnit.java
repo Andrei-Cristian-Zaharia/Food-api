@@ -5,10 +5,8 @@ import java.util.stream.Stream;
 
 public enum MeasurementUnit {
 
-    G,
-    KG,
-    ML,
-    L,
+    G, KG,
+    ML, L,
     SPOON;
 
     public static Boolean contains(String value) {

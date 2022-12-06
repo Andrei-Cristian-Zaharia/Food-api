@@ -50,7 +50,7 @@ public class IngredientController {
         return ResponseEntity.ok().body(ingredientList);
     }
 
-    @DeleteMapping("/name/{name}")
+    @DeleteMapping("/delete/name/{name}")
     public ResponseEntity<String> deleteByName(@PathVariable String name) {
         ingredientService.deleteIngredientByName(name);
 

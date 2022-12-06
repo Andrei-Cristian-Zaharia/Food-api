@@ -49,7 +49,7 @@ public class RecipeService {
                 = ingredientService.getAllIngredientsWithNames(createRecipeDTO.getIngredientNames());
 
         for (int i = 0; i < ingredients.size(); i++) {
-            if (!MeasurementUnit.contains(createRecipeDTO.getIngredientMeasurements().get(i))) {
+            if (Boolean.FALSE.equals(MeasurementUnit.contains(createRecipeDTO.getIngredientMeasurements().get(i)))) {
                 throw new NotFoundException(ObjectType.MEASUREMENT, createRecipeDTO.getIngredientMeasurements().get(i));
             }
 
