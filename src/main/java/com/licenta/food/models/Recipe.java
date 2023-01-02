@@ -22,6 +22,15 @@ public class Recipe {
     @Column(name = "howtoprepare")
     private String howToPrepare;
 
+    @Column(name = "time")
+    private int time;
+
+    @Column(name = "difficulty")
+    private int difficulty;
+
+    @Column(name = "image_address")
+    private String imageAddress;
+
     @OneToOne
     @JoinColumn(name = "id_person")
     private Person person;
