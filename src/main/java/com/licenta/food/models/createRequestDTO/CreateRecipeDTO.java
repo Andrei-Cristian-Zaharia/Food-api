@@ -20,6 +20,15 @@ public class CreateRecipeDTO {
     private String howToPrepare;
 
     @NotNull
+    private int time;
+
+    @NotNull
+    private int difficulty;
+
+    @NotNull
+    private String imageAddress;
+
+    @NotNull
     private List<String> ingredientNames;
 
     @NotNull

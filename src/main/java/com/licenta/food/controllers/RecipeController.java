@@ -1,5 +1,6 @@
 package com.licenta.food.controllers;
 
+import com.licenta.food.models.FilterRecipeDTO;
 import com.licenta.food.models.Recipe;
 import com.licenta.food.models.createRequestDTO.CreateRecipeDTO;
 import com.licenta.food.models.responseDTO.ResponseRecipeDTO;
@@ -27,9 +28,16 @@ public class RecipeController {
         return ResponseEntity.status(HttpStatus.CREATED).body(recipe);
     }
 
-    @GetMapping("/id/{id}")
-    public @ResponseBody ResponseEntity<ResponseRecipeDTO> getRecipeById(@PathVariable Long id) {
-        ResponseRecipeDTO result = recipeService.getRecipeById(id);
+    @GetMapping("id/{id}")
+    public @ResponseBody ResponseEntity<Recipe> getRecipeById(@PathVariable Long id) {
+        Recipe result = recipeService.getRecipeById(id);
+
+        return ResponseEntity.ok().body(result);
+    }
+
+    @GetMapping("/info/id/{id}")
+    public @ResponseBody ResponseEntity<ResponseRecipeDTO> getRecipeInfoById(@PathVariable Long id) {
+        ResponseRecipeDTO result = recipeService.getRecipeInfoById(id);
 
         return ResponseEntity.ok().body(result);
     }
@@ -46,6 +54,11 @@ public class RecipeController {
         List<ResponseRecipeDTO> recipes = recipeService.getAllRecipes();
 
         return ResponseEntity.ok().body(recipes);
+    }
+
+    @GetMapping("/all/filterIngredients")
+    public @ResponseBody ResponseEntity<List<ResponseRecipeDTO>> filterAllRecipesByIngredients(@RequestParam List<String> recipeFilter) {
+        return ResponseEntity.ok().body(recipeService.filterAllRecipesByIngredients(recipeFilter));
     }
 
     @DeleteMapping("/delete")

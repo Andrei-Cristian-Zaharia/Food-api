@@ -6,12 +6,15 @@ import com.licenta.food.exceptionHandlers.NotFoundException;
 import com.licenta.food.exceptionHandlers.RecipeHandlers.CreateRecipeDifferentSizes;
 import com.licenta.food.models.*;
 import com.licenta.food.models.createRequestDTO.CreateRecipeDTO;
+import com.licenta.food.models.responseDTO.IngredientOnRecipeResponseDTO;
 import com.licenta.food.models.responseDTO.ResponseRecipeDTO;
 import com.licenta.food.repositories.RecipeRepository;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,7 +44,7 @@ public class RecipeService {
     private void createRecipeIngredientRelations(Recipe recipe, CreateRecipeDTO createRecipeDTO) {
 
         if (!(createRecipeDTO.getIngredientNames().size() == createRecipeDTO.getIngredientQuantities().size()
-            && createRecipeDTO.getIngredientQuantities().size() == createRecipeDTO.getIngredientMeasurements().size())){
+                && createRecipeDTO.getIngredientQuantities().size() == createRecipeDTO.getIngredientMeasurements().size())) {
             throw new CreateRecipeDifferentSizes();
         }
 
@@ -76,7 +79,17 @@ public class RecipeService {
         }
     }
 
-    public ResponseRecipeDTO getRecipeById(Long id) {
+    public Recipe getRecipeById(Long id) {
+        Optional<Recipe> recipe = recipeRepository.findById(id);
+
+        if (recipe.isPresent()) {
+            return recipe.get();
+        } else {
+            throw new NotFoundException(ObjectType.RECIPE, id);
+        }
+    }
+
+    public ResponseRecipeDTO getRecipeInfoById(Long id) {
 
         Optional<Recipe> recipe = recipeRepository.findById(id);
 
@@ -88,6 +101,52 @@ public class RecipeService {
         } else {
             throw new NotFoundException(ObjectType.RECIPE, id);
         }
+    }
+
+    public class RecipeMissingIngredientsComparator implements Comparator<ResponseRecipeDTO> {
+        @Override
+        public int compare(ResponseRecipeDTO recipe1, ResponseRecipeDTO recipe2) {
+            return recipe1.getMissingIngredients().compareTo(recipe2.getMissingIngredients());
+        }
+    }
+
+    public List<ResponseRecipeDTO> filterAllRecipesByIngredients(List<String> ingredientsNames) {
+
+        if (ingredientsNames.isEmpty()) {
+            return getAllRecipes();
+        }
+
+        List<ResponseRecipeDTO> filterResult = new java.util.ArrayList<>(recipeRepository.findAll().stream()
+                .filter((Recipe recipe) -> {
+                    List<String> recipeIngredients = recipeIngredientsService.getIngredientsForRecipe(recipe.getId())
+                            .stream()
+                            .map(IngredientOnRecipeResponseDTO::getName)
+                            .toList();
+
+                    for (String ingredientName : ingredientsNames) {
+                        if (recipeIngredients.contains(ingredientName)) {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                }).map((Recipe recipe) -> {
+                    ResponseRecipeDTO recipeDTO = modelMapper.map(recipe, ResponseRecipeDTO.class);
+                    recipeDTO.setIngredientList(recipeIngredientsService.getIngredientsForRecipe(recipe.getId()));
+
+                    List<String> commonIngredients = new java.util.ArrayList<>(recipeDTO.getIngredientList().stream()
+                            .map(IngredientOnRecipeResponseDTO::getName)
+                            .toList());
+
+                    commonIngredients.retainAll(ingredientsNames);
+
+                    recipeDTO.setMissingIngredients(recipeDTO.getIngredientList().size() - commonIngredients.size());
+                    return recipeDTO;
+                }).toList());
+
+        filterResult.sort(Comparator.comparing(ResponseRecipeDTO::getMissingIngredients));
+        
+        return filterResult;
     }
 
     public List<ResponseRecipeDTO> getAllRecipes() {
@@ -108,6 +167,9 @@ public class RecipeService {
         recipe.setName(createRecipeDTO.getName());
         recipe.setDescription(createRecipeDTO.getDescription());
         recipe.setHowToPrepare(createRecipeDTO.getHowToPrepare());
+        recipe.setTime(createRecipeDTO.getTime());
+        recipe.setDifficulty(createRecipeDTO.getDifficulty());
+        recipe.setImageAddress(createRecipeDTO.getImageAddress());
         recipe.setPerson(personService.getPersonByName(createRecipeDTO.getOwnerName()));
         recipe = recipeRepository.save(recipe);
 

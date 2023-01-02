@@ -1,14 +1,18 @@
 package com.licenta.food.services;
 
+import com.licenta.food.enums.IngredientCategory;
 import com.licenta.food.enums.ObjectType;
 import com.licenta.food.exceptionHandlers.AlreadyExistsException;
 import com.licenta.food.exceptionHandlers.NotFoundException;
+import com.licenta.food.models.CategoryIngredientsDTO;
+import com.licenta.food.models.IngredientByCategoryDTO;
 import com.licenta.food.models.createRequestDTO.CreateIngredientRequest;
 import com.licenta.food.models.Ingredient;
 import com.licenta.food.repositories.IngredientRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,8 +52,45 @@ public class IngredientService {
         return ingredients.stream().map(Optional::get).toList();
     }
 
+    public IngredientByCategoryDTO getAllIngredientsByCategory() {
+
+        IngredientByCategoryDTO byCategoryList = new IngredientByCategoryDTO();
+
+        IngredientCategory.getCategories().forEach((String category) -> {
+            CategoryIngredientsDTO categoryIngredients = new CategoryIngredientsDTO();
+
+            categoryIngredients.setCategoryName(category);
+            categoryIngredients.setIngredients(ingredientRepository.findAllByCategory(category).get());
+            byCategoryList.addCategory(categoryIngredients);
+        });
+
+        return byCategoryList;
+    }
+
+    public IngredientByCategoryDTO getAllIngredientsByCategoryFiltered(String nameFilter) {
+
+        IngredientByCategoryDTO byCategoryList = new IngredientByCategoryDTO();
+
+        IngredientCategory.getCategories().forEach((String category) -> {
+            CategoryIngredientsDTO categoryIngredients = new CategoryIngredientsDTO();
+
+            categoryIngredients.setCategoryName(category);
+            categoryIngredients.setIngredients(
+                    ingredientRepository.findAllByCategoryAndNameContaining(category, nameFilter).get());
+            if (!categoryIngredients.getIngredients().isEmpty()) {
+                byCategoryList.addCategory(categoryIngredients);
+            }
+        });
+
+        return byCategoryList;
+    }
+
     public List<Ingredient> getAllIngredients() {
         return ingredientRepository.findAll();
+    }
+
+    public List<String> getAllIngredientsNames() {
+        return ingredientRepository.findAll().stream().map(Ingredient::getName).toList();
     }
 
     @Transactional

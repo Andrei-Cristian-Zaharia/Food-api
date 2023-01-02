@@ -1,5 +1,6 @@
 package com.licenta.food.controllers;
 
+import com.licenta.food.models.IngredientByCategoryDTO;
 import com.licenta.food.models.createRequestDTO.CreateIngredientRequest;
 import com.licenta.food.models.Ingredient;
 import com.licenta.food.services.IngredientService;
@@ -43,9 +44,27 @@ public class IngredientController {
         return ResponseEntity.ok().body(ingredientList);
     }
 
+    @GetMapping("/all/byCategory")
+    public @ResponseBody ResponseEntity<IngredientByCategoryDTO> getAllIngredientsByCategory() {
+        return ResponseEntity.ok().body(ingredientService.getAllIngredientsByCategory());
+    }
+
+    @GetMapping("/all/byCategory/filter")
+    public @ResponseBody ResponseEntity<IngredientByCategoryDTO> getAllIngredientsByCategory(
+            @RequestParam String nameFilter) {
+        return ResponseEntity.ok().body(ingredientService.getAllIngredientsByCategoryFiltered(nameFilter));
+    }
+
     @GetMapping("/all")
     public @ResponseBody ResponseEntity<List<Ingredient>> getALl() {
         List<Ingredient> ingredientList = ingredientService.getAllIngredients();
+
+        return ResponseEntity.ok().body(ingredientList);
+    }
+
+    @GetMapping("/all/name")
+    public @ResponseBody ResponseEntity<List<String>> getAllNames() {
+        List<String> ingredientList = ingredientService.getAllIngredientsNames();
 
         return ResponseEntity.ok().body(ingredientList);
     }

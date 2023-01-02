@@ -35,7 +35,7 @@ public class RouteFilter implements Filter {
             return;
         }
 
-        if (("[GUEST]").equals(req.getHeader(AUTH_HEADER))) {
+        if (("[GUEST]").equals(req.getHeader(AUTH_HEADER)) || ("[PERMIT]").equals(req.getHeader(AUTH_HEADER))) {
             chain.doFilter(request, response);
             return;
         }
