@@ -9,5 +9,11 @@ import java.util.List;
 @NoArgsConstructor
 public class FilterRecipeDTO {
 
+    String recipeName;
+    Integer prepareTimeMin;
+    Integer prepareTimeMax;
+    Integer rating;
+    Integer difficulty;
+    Integer spiciness;
     List<String> ingredientsNames;
 }

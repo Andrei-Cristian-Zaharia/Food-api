@@ -7,7 +7,7 @@ public enum MeasurementUnit {
 
     G, KG,
     ML, L,
-    SPOON;
+    SPOON, FRUNZE;
 
     public static Boolean contains(String value) {
 

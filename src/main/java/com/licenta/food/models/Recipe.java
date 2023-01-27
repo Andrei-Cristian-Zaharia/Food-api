@@ -28,6 +28,12 @@ public class Recipe {
     @Column(name = "difficulty")
     private int difficulty;
 
+    @Column(name = "spiciness")
+    private int spiciness;
+
+    @Column(name = "is_vegan")
+    private boolean isVegan;
+
     @Column(name = "image_address")
     private String imageAddress;
 

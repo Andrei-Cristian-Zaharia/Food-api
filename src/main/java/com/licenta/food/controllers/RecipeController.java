@@ -56,8 +56,8 @@ public class RecipeController {
         return ResponseEntity.ok().body(recipes);
     }
 
-    @GetMapping("/all/filterIngredients")
-    public @ResponseBody ResponseEntity<List<ResponseRecipeDTO>> filterAllRecipesByIngredients(@RequestParam List<String> recipeFilter) {
+    @PostMapping("/all/filtered")
+    public @ResponseBody ResponseEntity<List<ResponseRecipeDTO>> filterAllRecipesByIngredients(@RequestBody FilterRecipeDTO recipeFilter) {
         return ResponseEntity.ok().body(recipeService.filterAllRecipesByIngredients(recipeFilter));
     }
 

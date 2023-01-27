@@ -13,7 +13,13 @@ public enum IngredientCategory {
     CARNE("carne"),
     SEMINTE("seminte"),
     INDULCTORI("îndulcitori"),
-    PESTE("pește");
+    CEREALE("cereale"),
+    PESTE("pește"),
+    ULEIURI_SI_GRASIMI("uleiuri si grăsimi"),
+    CONDIMENTE("condimente"),
+    PLANTE_SI_VERDEATA("plante si verdeață"),
+    SOSURI("sosuri"),
+    PASTE("paste");
 
     private final String displayName;
 

@@ -38,5 +38,11 @@ public class CreateRecipeDTO {
     private List<String> ingredientMeasurements;
 
     @NotNull
+    private Integer spiciness;
+
+    @NotNull
+    private Boolean isVegan;
+
+    @NotNull
     private String ownerName;
 }
