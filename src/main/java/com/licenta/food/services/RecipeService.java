@@ -195,6 +195,13 @@ public class RecipeService {
                 .toList();
     }
 
+    public List<ResponseRecipeDTO> getAllRecipesByUsername(String username) {
+
+        return recipeRepository.findAllByPersonUsername(username).stream()
+                .map((Recipe recipe) -> modelMapper.map(recipe, ResponseRecipeDTO.class))
+                .toList();
+    }
+
     @Transactional
     public Recipe createRecipe(CreateRecipeDTO createRecipeDTO) {
 

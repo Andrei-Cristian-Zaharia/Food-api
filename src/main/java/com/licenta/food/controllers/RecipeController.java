@@ -28,8 +28,8 @@ public class RecipeController {
         return ResponseEntity.status(HttpStatus.CREATED).body(recipe);
     }
 
-    @GetMapping("id/{id}")
-    public @ResponseBody ResponseEntity<Recipe> getRecipeById(@PathVariable Long id) {
+    @GetMapping("/findById")
+    public @ResponseBody ResponseEntity<Recipe> getRecipeById(@RequestParam Long id) {
         Recipe result = recipeService.getRecipeById(id);
 
         return ResponseEntity.ok().body(result);
@@ -42,8 +42,8 @@ public class RecipeController {
         return ResponseEntity.ok().body(result);
     }
 
-    @GetMapping("/name/{name}")
-    public @ResponseBody ResponseEntity<ResponseRecipeDTO> getRecipeByName(@PathVariable String name) {
+    @GetMapping("/findByName")
+    public @ResponseBody ResponseEntity<ResponseRecipeDTO> getRecipeByName(@RequestParam String name) {
         ResponseRecipeDTO result = recipeService.getRecipeByName(name);
 
         return ResponseEntity.ok().body(result);
@@ -52,6 +52,13 @@ public class RecipeController {
     @GetMapping("/all")
     public @ResponseBody ResponseEntity<List<ResponseRecipeDTO>> getAllRecipes() {
         List<ResponseRecipeDTO> recipes = recipeService.getAllRecipes();
+
+        return ResponseEntity.ok().body(recipes);
+    }
+
+    @GetMapping("/all/owner/username")
+    public @ResponseBody ResponseEntity<List<ResponseRecipeDTO>> getAllRecipesByOwnerUsername(@RequestParam String name) {
+        List<ResponseRecipeDTO> recipes = recipeService.getAllRecipesByUsername(name);
 
         return ResponseEntity.ok().body(recipes);
     }
