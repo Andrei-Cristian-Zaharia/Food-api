@@ -73,6 +73,6 @@ public class IngredientController {
     public ResponseEntity<String> deleteByName(@PathVariable String name) {
         ingredientService.deleteIngredientByName(name);
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Ingredient " + name + " was deleted.");
+        return ResponseEntity.status(HttpStatus.OK).body("Ingredient " + name + " was deleted.");
     }
 }

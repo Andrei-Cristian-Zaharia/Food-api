@@ -72,6 +72,6 @@ public class RecipeController {
     public ResponseEntity<String> deleteById(@RequestParam Long id) {
         recipeService.deleteRecipe(id);
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Recipe with id " + id + " was deleted.");
+        return ResponseEntity.status(HttpStatus.OK).body("Recipe with id " + id + " was deleted.");
     }
 }
