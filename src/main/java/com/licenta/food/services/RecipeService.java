@@ -4,11 +4,13 @@ import com.licenta.food.enums.ObjectType;
 import com.licenta.food.exceptionHandlers.NotFoundException;
 import com.licenta.food.exceptionHandlers.RecipeHandlers.CreateRecipeDifferentSizes;
 import com.licenta.food.models.*;
+import com.licenta.food.models.createRequestDTO.AddFavoriteDTO;
 import com.licenta.food.models.createRequestDTO.CreateRecipeDTO;
 import com.licenta.food.models.responseDTO.IngredientOnRecipeResponseDTO;
 import com.licenta.food.models.responseDTO.ResponseRecipeDTO;
 import com.licenta.food.repositories.RecipeRepository;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class RecipeService {
 
     private final PersonService personService;
@@ -33,17 +36,7 @@ public class RecipeService {
     private final ModelMapper modelMapper;
     private final ReviewRestTemplateService reviewRestTemplateService;
 
-    public RecipeService(PersonService personService, IngredientService ingredientService,
-                         RecipeIngredientsService recipeIngredientsService,
-                         RecipeRepository recipeRepository, ModelMapper modelMapper,
-                         ReviewRestTemplateService reviewRestTemplateService) {
-        this.personService = personService;
-        this.ingredientService = ingredientService;
-        this.recipeIngredientsService = recipeIngredientsService;
-        this.recipeRepository = recipeRepository;
-        this.modelMapper = modelMapper;
-        this.reviewRestTemplateService = reviewRestTemplateService;
-    }
+    private final SavedRecipesService savedRecipesService;
 
     private void createRecipeIngredientRelations(Recipe recipe, CreateRecipeDTO createRecipeDTO) {
 
@@ -200,6 +193,21 @@ public class RecipeService {
         return recipeRepository.findAllByPersonUsername(username).stream()
                 .map((Recipe recipe) -> modelMapper.map(recipe, ResponseRecipeDTO.class))
                 .toList();
+    }
+
+    public Boolean addFavoriteRecipe(AddFavoriteDTO addFavoriteDTO) {
+        if (Boolean.FALSE.equals(personService.existPersonById(addFavoriteDTO.getUserId()))) {
+            throw new NotFoundException(ObjectType.PERSON, addFavoriteDTO.getUserId());
+        }
+
+        if (recipeRepository.existsById(addFavoriteDTO.getRecipeId())) {
+            savedRecipesService.existItem(addFavoriteDTO); // checks if the relation already exists
+
+            savedRecipesService.saveNewRelation(addFavoriteDTO.getUserId(), addFavoriteDTO.getRecipeId());
+            return true;
+        }
+
+        throw new NotFoundException(ObjectType.RECIPE, addFavoriteDTO.getRecipeId());
     }
 
     @Transactional

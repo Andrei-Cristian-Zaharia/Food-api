@@ -2,9 +2,11 @@ package com.licenta.food.controllers;
 
 import com.licenta.food.models.FilterRecipeDTO;
 import com.licenta.food.models.Recipe;
+import com.licenta.food.models.createRequestDTO.AddFavoriteDTO;
 import com.licenta.food.models.createRequestDTO.CreateRecipeDTO;
 import com.licenta.food.models.responseDTO.ResponseRecipeDTO;
 import com.licenta.food.services.RecipeService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,14 +14,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/recipe")
 public class RecipeController {
 
     private final RecipeService recipeService;
-
-    public RecipeController(RecipeService recipeService) {
-        this.recipeService = recipeService;
-    }
 
     @PostMapping
     public @ResponseBody ResponseEntity<Recipe> createNewRecipe(@RequestBody CreateRecipeDTO createRecipeDTO) {
@@ -61,6 +60,13 @@ public class RecipeController {
         List<ResponseRecipeDTO> recipes = recipeService.getAllRecipesByUsername(name);
 
         return ResponseEntity.ok().body(recipes);
+    }
+
+    @PostMapping("/addFavorite")
+    public @ResponseBody ResponseEntity<String> addRecipeToFavorite(@RequestBody AddFavoriteDTO addFavoriteDTO) {
+        recipeService.addFavoriteRecipe(addFavoriteDTO);
+
+        return ResponseEntity.ok().body("Favorite list updated.");
     }
 
     @PostMapping("/all/filtered")

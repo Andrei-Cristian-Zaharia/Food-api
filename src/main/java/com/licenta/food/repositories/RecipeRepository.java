@@ -13,4 +13,6 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
     Optional<Recipe> findByName(String name);
 
     List<Recipe> findAllByPersonUsername(String username);
+
+    boolean existsById(Long id);
 }

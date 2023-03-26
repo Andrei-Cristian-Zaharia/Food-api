@@ -22,4 +22,14 @@ public class PersonService {
 
         return person.orElseThrow(() -> new NotFoundException(ObjectType.PERSON, name));
     }
+
+    public Person getPersonById(Long id) {
+        Optional<Person> person = personRepository.findById(id);
+
+        return person.orElseThrow(() -> new NotFoundException(ObjectType.PERSON, id));
+    }
+
+    public Boolean existPersonById(Long id) {
+        return personRepository.existsById(id);
+    }
 }
