@@ -88,6 +88,11 @@ public class RecipeService {
                 .map(r -> modelMapper.map(r, ResponseRecipeDTO.class)).toList();
     }
 
+    public List<String> getAllFavoriteRecipesNames(String email) {
+        return getAllRecipesWithIds(savedRecipesService.getAllRelationsForUserEmail(email)).stream()
+                .map(ResponseRecipeDTO::getName).toList();
+    }
+
     public List<ResponseRecipeDTO> getAllRecipesWithIds(List<Long> ids) {
         return recipeRepository.findAllByIdIn(ids).stream()
                 .map(r -> modelMapper.map(r, ResponseRecipeDTO.class))
