@@ -8,11 +8,18 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class SavedRecipesService {
 
     private final SavedRecipesRepository savedRecipesRepository;
+
+    public List<Long> getAllRelationsForUserEmail(String email) {
+
+        return savedRecipesRepository.findRecipeByEmail(email);
+    }
 
     public void existItem(AddFavoriteDTO addFavoriteDTO) {
         if (savedRecipesRepository.existsByRecipeIdAndPersonId(
@@ -30,5 +37,10 @@ public class SavedRecipesService {
         relation.setPersonId(userId);
 
         savedRecipesRepository.save(relation);
+    }
+
+    @Transactional
+    public void deleteRelation(Long id) {
+        savedRecipesRepository.deleteById(id);
     }
 }

@@ -32,9 +32,6 @@ public class CreateRecipeDTO {
     private List<String> ingredientNames;
 
     @NotNull
-    private List<Integer> ingredientQuantities;
-
-    @NotNull
     private List<String> ingredientMeasurements;
 
     @NotNull
@@ -42,6 +39,9 @@ public class CreateRecipeDTO {
 
     @NotNull
     private Boolean isVegan;
+
+    @NotNull
+    private Boolean publicRecipe;
 
     @NotNull
     private String ownerName;

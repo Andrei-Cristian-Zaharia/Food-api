@@ -34,6 +34,9 @@ public class Recipe {
     @Column(name = "is_vegan")
     private boolean isVegan;
 
+    @Column(name = "public")
+    private boolean publicRecipe;
+
     @Column(name = "image_address")
     private String imageAddress;
 

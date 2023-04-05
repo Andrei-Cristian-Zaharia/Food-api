@@ -21,10 +21,9 @@ public class RecipeIngredientsService {
         this.recipeIngredientRepository = recipeIngredientRepository;
     }
 
-    public void addIngredientToRecipe(Recipe recipe, Ingredient ingredient,
-                                      Integer quantity, String measurement) {
+    public void addIngredientToRecipe(Recipe recipe, Ingredient ingredient, String measurement) {
 
-        recipeIngredientRepository.save(new RecipeIngredient(recipe, ingredient, quantity, measurement));
+        recipeIngredientRepository.save(new RecipeIngredient(recipe, ingredient, measurement));
     }
 
     public List<IngredientOnRecipeResponseDTO> getIngredientsForRecipe(Long id) {
@@ -37,7 +36,6 @@ public class RecipeIngredientsService {
                             IngredientOnRecipeResponseDTO.class
                     );
 
-                    ingredient.setQuantity(ri.getQuantity());
                     ingredient.setMeasurementUnit(ri.getMeasurementUnit());
 
                     return ingredient;

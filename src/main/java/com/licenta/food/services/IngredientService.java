@@ -2,6 +2,7 @@ package com.licenta.food.services;
 
 import com.licenta.food.enums.IngredientCategory;
 import com.licenta.food.enums.ObjectType;
+import com.licenta.food.enums.RomanianAlphabet;
 import com.licenta.food.exceptionHandlers.AlreadyExistsException;
 import com.licenta.food.exceptionHandlers.NotFoundException;
 import com.licenta.food.models.CategoryIngredientsDTO;
@@ -12,7 +13,6 @@ import com.licenta.food.repositories.IngredientRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -67,16 +67,20 @@ public class IngredientService {
         return byCategoryList;
     }
 
-    public IngredientByCategoryDTO getAllIngredientsByCategoryFiltered(String nameFilter) {
-
+    public IngredientByCategoryDTO getIngredientsFilteredByName(String nameFilter) {
         IngredientByCategoryDTO byCategoryList = new IngredientByCategoryDTO();
 
         IngredientCategory.getCategories().forEach((String category) -> {
             CategoryIngredientsDTO categoryIngredients = new CategoryIngredientsDTO();
-
             categoryIngredients.setCategoryName(category);
-            categoryIngredients.setIngredients(
-                    ingredientRepository.findAllByCategoryAndNameContaining(category, nameFilter).get());
+            List<Ingredient> ingredients = ingredientRepository.findAllByCategory(category).get();
+
+            ingredients.forEach((Ingredient ing) -> {
+                if (RomanianAlphabet.changedWord(ing.getName()).contains(nameFilter)) {
+                    categoryIngredients.getIngredients().add(ing);
+                }
+            });
+
             if (!categoryIngredients.getIngredients().isEmpty()) {
                 byCategoryList.addCategory(categoryIngredients);
             }

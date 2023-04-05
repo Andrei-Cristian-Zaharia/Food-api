@@ -52,7 +52,7 @@ public class IngredientController {
     @GetMapping("/all/byCategory/filter")
     public @ResponseBody ResponseEntity<IngredientByCategoryDTO> getAllIngredientsByCategory(
             @RequestParam String nameFilter) {
-        return ResponseEntity.ok().body(ingredientService.getAllIngredientsByCategoryFiltered(nameFilter));
+        return ResponseEntity.ok().body(ingredientService.getIngredientsFilteredByName(nameFilter));
     }
 
     @GetMapping("/all")

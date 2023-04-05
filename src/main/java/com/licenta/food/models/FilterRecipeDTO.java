@@ -10,6 +10,7 @@ import java.util.List;
 public class FilterRecipeDTO {
 
     String recipeName;
+    String authorName;
     Integer prepareTimeMin;
     Integer prepareTimeMax;
     Integer rating;

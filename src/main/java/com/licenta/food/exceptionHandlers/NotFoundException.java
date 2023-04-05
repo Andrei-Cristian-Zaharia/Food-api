@@ -15,6 +15,7 @@ public class NotFoundException extends RuntimeException{
             case INGREDIENT -> throw new NotFoundException("Ingredient with name " + name + NOT_FOUND);
             case PERSON -> throw new NotFoundException("Person with name " + name + NOT_FOUND);
             case MEASUREMENT -> throw new NotFoundException("Measurement with name " + name + NOT_FOUND);
+            case SAVED_RECIPE -> throw new NotFoundException("Saved recipe" + name + NOT_FOUND);
             default -> throw new NotFoundException("Not found.");
         }
     }
@@ -25,6 +26,7 @@ public class NotFoundException extends RuntimeException{
             case RECIPE -> throw new NotFoundException("Recipe with id " + id + NOT_FOUND);
             case INGREDIENT -> throw new NotFoundException("Ingredient with id " + id + NOT_FOUND);
             case PERSON -> throw new NotFoundException("Person with id " + id + NOT_FOUND);
+            case SAVED_RECIPE -> throw new NotFoundException("Saved recipe" + id + NOT_FOUND);
             default -> throw new NotFoundException("Not found.");
         }
     }

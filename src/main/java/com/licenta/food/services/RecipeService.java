@@ -1,6 +1,7 @@
 package com.licenta.food.services;
 
 import com.licenta.food.enums.ObjectType;
+import com.licenta.food.enums.RomanianAlphabet;
 import com.licenta.food.exceptionHandlers.NotFoundException;
 import com.licenta.food.exceptionHandlers.RecipeHandlers.CreateRecipeDifferentSizes;
 import com.licenta.food.models.*;
@@ -15,48 +16,30 @@ import org.modelmapper.ModelMapper;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
 public class RecipeService {
 
     private final PersonService personService;
-
     private final IngredientService ingredientService;
-
     private final RecipeIngredientsService recipeIngredientsService;
-
     private final RecipeRepository recipeRepository;
-
     private final ModelMapper modelMapper;
     private final ReviewRestTemplateService reviewRestTemplateService;
-
     private final SavedRecipesService savedRecipesService;
 
     private void createRecipeIngredientRelations(Recipe recipe, CreateRecipeDTO createRecipeDTO) {
 
-        if (!(createRecipeDTO.getIngredientNames().size() == createRecipeDTO.getIngredientQuantities().size()
-                && createRecipeDTO.getIngredientQuantities().size() == createRecipeDTO.getIngredientMeasurements().size())) {
+        if (!(createRecipeDTO.getIngredientNames().size()  == createRecipeDTO.getIngredientMeasurements().size())) {
             throw new CreateRecipeDifferentSizes();
         }
 
-        List<Ingredient> ingredients
-                = ingredientService.getAllIngredientsWithNames(createRecipeDTO.getIngredientNames());
-
-        for (int i = 0; i < ingredients.size(); i++) {
-//            if (Boolean.FALSE.equals(MeasurementUnit.contains(createRecipeDTO.getIngredientMeasurements().get(i)))) {
-//                throw new NotFoundException(ObjectType.MEASUREMENT, createRecipeDTO.getIngredientMeasurements().get(i));
-//            }
-
+        for (int i = 0; i < createRecipeDTO.getIngredientNames().size(); i++) {
             recipeIngredientsService.addIngredientToRecipe(
                     recipe,
-                    ingredients.get(i),
-                    createRecipeDTO.getIngredientQuantities().get(i),
+                    ingredientService.getIngredientByName(createRecipeDTO.getIngredientNames().get(i)),
                     createRecipeDTO.getIngredientMeasurements().get(i)
             );
         }
@@ -100,6 +83,17 @@ public class RecipeService {
         }
     }
 
+    public List<ResponseRecipeDTO> getAllFavoriteRecipes(String email) {
+        return getAllRecipesWithIds(savedRecipesService.getAllRelationsForUserEmail(email)).stream()
+                .map(r -> modelMapper.map(r, ResponseRecipeDTO.class)).toList();
+    }
+
+    public List<ResponseRecipeDTO> getAllRecipesWithIds(List<Long> ids) {
+        return recipeRepository.findAllByIdIn(ids).stream()
+                .map(r -> modelMapper.map(r, ResponseRecipeDTO.class))
+                .toList();
+    }
+
     public class RecipeMissingIngredientsComparator implements Comparator<ResponseRecipeDTO> {
         @Override
         public int compare(ResponseRecipeDTO recipe1, ResponseRecipeDTO recipe2) {
@@ -115,7 +109,7 @@ public class RecipeService {
                     .filter((Recipe recipe) -> {
                         List<String> recipeIngredients = recipeIngredientsService.getIngredientsForRecipe(recipe.getId())
                                 .stream()
-                                .map(IngredientOnRecipeResponseDTO::getName)
+                                .map(r -> RomanianAlphabet.changedWord(r.getName()))
                                 .toList();
 
                         for (String ingredientName : filters.getIngredientsNames()) {
@@ -157,7 +151,15 @@ public class RecipeService {
 
             if (filters.getRecipeName() != null
                     && !filters.getRecipeName().isEmpty()
-                    && !r.getName().contains(filters.getRecipeName())) {
+                    && !r.getName().toLowerCase(Locale.getDefault())
+                    .contains(filters.getRecipeName().toLowerCase(Locale.getDefault()))) {
+                return false;
+            }
+
+            if (filters.getAuthorName() != null
+                    && !filters.getAuthorName().isEmpty()
+                    && !r.getPerson().getUsername().toLowerCase(Locale.getDefault())
+                    .contains(filters.getAuthorName().toLowerCase(Locale.getDefault()))) {
                 return false;
             }
 
@@ -221,6 +223,7 @@ public class RecipeService {
         recipe.setDifficulty(createRecipeDTO.getDifficulty());
         recipe.setSpiciness(createRecipeDTO.getSpiciness());
         recipe.setVegan(createRecipeDTO.getIsVegan());
+        recipe.setPublicRecipe(createRecipeDTO.getPublicRecipe());
         recipe.setImageAddress(createRecipeDTO.getImageAddress());
         recipe.setPerson(personService.getPersonByName(createRecipeDTO.getOwnerName()));
         recipe = recipeRepository.save(recipe);

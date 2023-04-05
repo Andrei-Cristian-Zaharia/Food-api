@@ -5,5 +5,7 @@ public enum ObjectType {
     RECIPE,
     INGREDIENT,
     PERSON,
-    MEASUREMENT
+    MEASUREMENT,
+
+    SAVED_RECIPE
 }

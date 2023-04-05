@@ -18,6 +18,7 @@ public class ResponseRecipeDTO {
     private int difficulty;
     private int spiciness;
     private boolean isVegan;
+    private boolean publicRecipe;
     private String imageAddress;
     private Integer missingIngredients = 0;
     private Person person;

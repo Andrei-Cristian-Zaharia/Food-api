@@ -69,6 +69,12 @@ public class RecipeController {
         return ResponseEntity.ok().body("Favorite list updated.");
     }
 
+    @GetMapping("/favoriteList")
+    public @ResponseBody ResponseEntity<List<ResponseRecipeDTO>> getAllRelationsForUserEmail(@RequestParam String email) {
+
+        return ResponseEntity.ok().body(recipeService.getAllFavoriteRecipes(email));
+    }
+
     @PostMapping("/all/filtered")
     public @ResponseBody ResponseEntity<List<ResponseRecipeDTO>> filterAllRecipesByIngredients(@RequestBody FilterRecipeDTO recipeFilter) {
         return ResponseEntity.ok().body(recipeService.filterAllRecipesByIngredients(recipeFilter));
