@@ -40,7 +40,7 @@ public class SavedRecipesService {
     }
 
     @Transactional
-    public void deleteRelation(Long id) {
-        savedRecipesRepository.deleteById(id);
+    public void deleteRelation(Long recipeId, Long userId) {
+        savedRecipesRepository.deleteByRecipeIdAndPersonId(recipeId, userId);
     }
 }

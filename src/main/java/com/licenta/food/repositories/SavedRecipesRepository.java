@@ -18,4 +18,6 @@ public interface SavedRecipesRepository extends JpaRepository<SavedRecipe, Long>
             "using(id_person) " +
             "WHERE p.email_address = ?1", nativeQuery = true)
     List<Long> findRecipeByEmail(String email);
+
+    void deleteByRecipeIdAndPersonId(Long recipeId, Long userId);
 }
