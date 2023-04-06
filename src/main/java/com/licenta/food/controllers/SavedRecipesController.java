@@ -17,6 +17,6 @@ public class SavedRecipesController {
                                                                @RequestParam Long userId) {
 
         savedRecipesService.deleteRelation(recipeId, userId);
-        return ResponseEntity.ok("Deleted relation");
+        return ResponseEntity.noContent().build();
     }
 }

@@ -66,13 +66,21 @@ public class RecipeController {
     public @ResponseBody ResponseEntity<String> addRecipeToFavorite(@RequestBody AddFavoriteDTO addFavoriteDTO) {
         recipeService.addFavoriteRecipe(addFavoriteDTO);
 
-        return ResponseEntity.ok().body("Favorite list updated.");
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/favoriteList")
     public @ResponseBody ResponseEntity<List<ResponseRecipeDTO>> getAllRelationsForUserEmail(@RequestParam String email) {
 
         return ResponseEntity.ok().body(recipeService.getAllFavoriteRecipes(email));
+    }
+
+    @PostMapping("/favoriteListFiltered")
+    public @ResponseBody ResponseEntity<List<ResponseRecipeDTO>> getAllRelationsFilteredForUserEmail(
+            @RequestBody FilterRecipeDTO recipeFilter,
+            @RequestParam String email) {
+
+        return ResponseEntity.ok().body(recipeService.filterAllFavoriteRecipes(recipeFilter, email));
     }
 
     @GetMapping("/favoriteNames")
@@ -82,8 +90,9 @@ public class RecipeController {
     }
 
     @PostMapping("/all/filtered")
-    public @ResponseBody ResponseEntity<List<ResponseRecipeDTO>> filterAllRecipesByIngredients(@RequestBody FilterRecipeDTO recipeFilter) {
-        return ResponseEntity.ok().body(recipeService.filterAllRecipesByIngredients(recipeFilter));
+    public @ResponseBody ResponseEntity<List<ResponseRecipeDTO>> filterAllRecipesByIngredients(
+            @RequestBody FilterRecipeDTO recipeFilter) {
+        return ResponseEntity.ok().body(recipeService.filterAllRecipes(recipeFilter));
     }
 
     @DeleteMapping("/delete")

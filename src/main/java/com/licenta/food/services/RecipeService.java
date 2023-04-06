@@ -90,13 +90,11 @@ public class RecipeService {
 
     public List<String> getAllFavoriteRecipesNames(String email) {
         return getAllRecipesWithIds(savedRecipesService.getAllRelationsForUserEmail(email)).stream()
-                .map(ResponseRecipeDTO::getName).toList();
+                .map(Recipe::getName).toList();
     }
 
-    public List<ResponseRecipeDTO> getAllRecipesWithIds(List<Long> ids) {
-        return recipeRepository.findAllByIdIn(ids).stream()
-                .map(r -> modelMapper.map(r, ResponseRecipeDTO.class))
-                .toList();
+    public List<Recipe> getAllRecipesWithIds(List<Long> ids) {
+        return recipeRepository.findAllByIdIn(ids);
     }
 
     public class RecipeMissingIngredientsComparator implements Comparator<ResponseRecipeDTO> {
@@ -106,11 +104,19 @@ public class RecipeService {
         }
     }
 
-    public List<ResponseRecipeDTO> filterAllRecipesByIngredients(FilterRecipeDTO filters) {
+    public List<ResponseRecipeDTO> filterAllRecipes(FilterRecipeDTO filters) {
+        return filterRecipes(filters, recipeRepository.findAll(), false, null);
+    }
+
+    public List<ResponseRecipeDTO> filterAllFavoriteRecipes(FilterRecipeDTO filters, String email) {
+        return filterRecipes(filters, getAllRecipesWithIds(savedRecipesService.getAllRelationsForUserEmail(email)), true, email);
+    }
+
+    public List<ResponseRecipeDTO> filterRecipes(FilterRecipeDTO filters, List<Recipe> recipes, Boolean isFavorite, String email) {
 
         List<ResponseRecipeDTO> filterResult;
         if (filters.getIngredientsNames() != null && !filters.getIngredientsNames().isEmpty()) {
-            filterResult = new java.util.ArrayList<>(recipeRepository.findAll().stream()
+            filterResult = new java.util.ArrayList<>(recipes.stream()
                     .filter((Recipe recipe) -> {
                         List<String> recipeIngredients = recipeIngredientsService.getIngredientsForRecipe(recipe.getId())
                                 .stream()
@@ -138,7 +144,11 @@ public class RecipeService {
                         return recipeDTO;
                     }).toList());
         } else {
-            filterResult = getAllRecipes();
+            if (isFavorite){
+                filterResult = getAllFavoriteRecipes(email);
+            } else {
+                filterResult = getAllRecipes();
+            }
         }
 
         return filterResult.stream().filter(r -> {
