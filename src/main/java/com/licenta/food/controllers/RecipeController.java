@@ -89,6 +89,12 @@ public class RecipeController {
         return ResponseEntity.ok().body(recipeService.getAllFavoriteRecipesNames(email));
     }
 
+    @GetMapping("/countUserRecipes")
+    public @ResponseBody ResponseEntity<Integer> countUserRecipes(@RequestParam String email) {
+
+        return ResponseEntity.ok(recipeService.countUserRecipes(email));
+    }
+
     @PostMapping("/all/filtered")
     public @ResponseBody ResponseEntity<List<ResponseRecipeDTO>> filterAllRecipesByIngredients(
             @RequestBody FilterRecipeDTO recipeFilter) {

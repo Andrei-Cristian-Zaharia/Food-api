@@ -227,6 +227,10 @@ public class RecipeService {
         throw new NotFoundException(ObjectType.RECIPE, addFavoriteDTO.getRecipeId());
     }
 
+    public Integer countUserRecipes(String email) {
+        return recipeRepository.countByPerson_EmailAddress(email);
+    }
+
     @Transactional
     public Recipe createRecipe(CreateRecipeDTO createRecipeDTO) {
 
