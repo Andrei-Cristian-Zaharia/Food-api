@@ -144,7 +144,7 @@ public class RecipeService {
                         return recipeDTO;
                     }).toList());
         } else {
-            if (isFavorite){
+            if (Boolean.TRUE.equals(isFavorite)){
                 filterResult = getAllFavoriteRecipes(email);
             } else {
                 filterResult = getAllRecipes();
