@@ -32,8 +32,12 @@ public class RecipeService {
 
     private void createRecipeIngredientRelations(Recipe recipe, CreateRecipeDTO createRecipeDTO) {
 
-        if (!(createRecipeDTO.getIngredientNames().size()  == createRecipeDTO.getIngredientMeasurements().size())) {
+        if (createRecipeDTO.getIngredientNames().size() != createRecipeDTO.getIngredientMeasurements().size()) {
             throw new CreateRecipeDifferentSizes();
+        }
+
+        if (createRecipeDTO.getId() != null) {
+            recipeIngredientsService.deletePreviousRelations(createRecipeDTO.getId());
         }
 
         for (int i = 0; i < createRecipeDTO.getIngredientNames().size(); i++) {
@@ -85,7 +89,32 @@ public class RecipeService {
 
     public List<ResponseRecipeDTO> getAllFavoriteRecipes(String email) {
         return getAllRecipesWithIds(savedRecipesService.getAllRelationsForUserEmail(email)).stream()
-                .map(r -> modelMapper.map(r, ResponseRecipeDTO.class)).toList();
+                .map((Recipe recipe) -> {
+                    ResponseRecipeDTO recipeDTO = modelMapper.map(recipe, ResponseRecipeDTO.class);
+                    recipeDTO.setIngredientList(recipeIngredientsService.getIngredientsForRecipe(recipe.getId()));
+                    return recipeDTO;
+                }).toList();
+    }
+
+    public List<ResponseRecipeDTO> getAllRecipesByUsername(String username) {
+
+        return recipeRepository.findAllByPersonUsername(username).stream()
+                .map((Recipe recipe) -> {
+                    ResponseRecipeDTO recipeDTO = modelMapper.map(recipe, ResponseRecipeDTO.class);
+                    recipeDTO.setIngredientList(recipeIngredientsService.getIngredientsForRecipe(recipe.getId()));
+                    return recipeDTO;
+                }).toList();
+    }
+
+    public List<ResponseRecipeDTO> getAllRecipes() {
+
+        return recipeRepository.findAll().stream()
+                .map((Recipe recipe) -> {
+                    ResponseRecipeDTO recipeDTO = modelMapper.map(recipe, ResponseRecipeDTO.class);
+                    recipeDTO.setIngredientList(recipeIngredientsService.getIngredientsForRecipe(recipe.getId()));
+                    return recipeDTO;
+                })
+                .toList();
     }
 
     public List<String> getAllFavoriteRecipesNames(String email) {
@@ -194,24 +223,6 @@ public class RecipeService {
         }).sorted(Comparator.comparing(ResponseRecipeDTO::getMissingIngredients)).toList();
     }
 
-    public List<ResponseRecipeDTO> getAllRecipes() {
-
-        return recipeRepository.findAll().stream()
-                .map((Recipe recipe) -> {
-                    ResponseRecipeDTO recipeDTO = modelMapper.map(recipe, ResponseRecipeDTO.class);
-                    recipeDTO.setIngredientList(recipeIngredientsService.getIngredientsForRecipe(recipe.getId()));
-                    return recipeDTO;
-                })
-                .toList();
-    }
-
-    public List<ResponseRecipeDTO> getAllRecipesByUsername(String username) {
-
-        return recipeRepository.findAllByPersonUsername(username).stream()
-                .map((Recipe recipe) -> modelMapper.map(recipe, ResponseRecipeDTO.class))
-                .toList();
-    }
-
     public Boolean addFavoriteRecipe(AddFavoriteDTO addFavoriteDTO) {
         if (Boolean.FALSE.equals(personService.existPersonById(addFavoriteDTO.getUserId()))) {
             throw new NotFoundException(ObjectType.PERSON, addFavoriteDTO.getUserId());
@@ -234,7 +245,13 @@ public class RecipeService {
     @Transactional
     public Recipe createRecipe(CreateRecipeDTO createRecipeDTO) {
 
-        Recipe recipe = new Recipe();
+        Recipe recipe;
+        if (createRecipeDTO.getId() == null) {
+            recipe = new Recipe();
+        } else {
+            recipe = recipeRepository.findById(createRecipeDTO.getId()).get();
+        }
+
         recipe.setName(createRecipeDTO.getName());
         recipe.setDescription(createRecipeDTO.getDescription());
         recipe.setHowToPrepare(createRecipeDTO.getHowToPrepare());

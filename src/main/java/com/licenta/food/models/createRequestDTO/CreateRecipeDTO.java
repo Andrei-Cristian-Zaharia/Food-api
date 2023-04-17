@@ -10,6 +10,8 @@ import java.util.List;
 @NoArgsConstructor
 public class CreateRecipeDTO {
 
+    private Long id;
+
     @NotNull
     private String name;
 

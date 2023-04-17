@@ -26,6 +26,10 @@ public class RecipeIngredientsService {
         recipeIngredientRepository.save(new RecipeIngredient(recipe, ingredient, measurement));
     }
 
+    public void deletePreviousRelations(Long recipeId) {
+        recipeIngredientRepository.deleteAllByRecipe_Id(recipeId);
+    }
+
     public List<IngredientOnRecipeResponseDTO> getIngredientsForRecipe(Long id) {
 
         return recipeIngredientRepository.findAllByRecipeId(id)
