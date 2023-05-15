@@ -1,7 +1,7 @@
 package com.licenta.food.models;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 @Data
 @Entity
@@ -43,4 +43,7 @@ public class Recipe {
     @OneToOne
     @JoinColumn(name = "id_person")
     private Person person;
+
+    @Column(name = "status")
+    private String status;
 }

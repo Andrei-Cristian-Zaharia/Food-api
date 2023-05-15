@@ -1,6 +1,7 @@
 package com.licenta.food.services;
 
 import com.licenta.food.enums.ObjectType;
+import com.licenta.food.enums.RecipeStatus;
 import com.licenta.food.enums.RomanianAlphabet;
 import com.licenta.food.exceptionHandlers.NotFoundException;
 import com.licenta.food.exceptionHandlers.RecipeHandlers.CreateRecipeDifferentSizes;
@@ -89,6 +90,7 @@ public class RecipeService {
 
     public List<ResponseRecipeDTO> getAllFavoriteRecipes(String email) {
         return getAllRecipesWithIds(savedRecipesService.getAllRelationsForUserEmail(email)).stream()
+                .filter(this::filterRecipes)
                 .map((Recipe recipe) -> {
                     ResponseRecipeDTO recipeDTO = modelMapper.map(recipe, ResponseRecipeDTO.class);
                     recipeDTO.setIngredientList(recipeIngredientsService.getIngredientsForRecipe(recipe.getId()));
@@ -109,6 +111,7 @@ public class RecipeService {
     public List<ResponseRecipeDTO> getAllRecipes() {
 
         return recipeRepository.findAll().stream()
+                .filter(this::filterRecipes)
                 .map((Recipe recipe) -> {
                     ResponseRecipeDTO recipeDTO = modelMapper.map(recipe, ResponseRecipeDTO.class);
                     recipeDTO.setIngredientList(recipeIngredientsService.getIngredientsForRecipe(recipe.getId()));
@@ -119,6 +122,7 @@ public class RecipeService {
 
     public List<String> getAllFavoriteRecipesNames(String email) {
         return getAllRecipesWithIds(savedRecipesService.getAllRelationsForUserEmail(email)).stream()
+                .filter(this::filterRecipes)
                 .map(Recipe::getName).toList();
     }
 
@@ -146,6 +150,7 @@ public class RecipeService {
         List<ResponseRecipeDTO> filterResult;
         if (filters.getIngredientsNames() != null && !filters.getIngredientsNames().isEmpty()) {
             filterResult = new java.util.ArrayList<>(recipes.stream()
+                    .filter(this::filterRecipes)
                     .filter((Recipe recipe) -> {
                         List<String> recipeIngredients = recipeIngredientsService.getIngredientsForRecipe(recipe.getId())
                                 .stream()
@@ -173,7 +178,7 @@ public class RecipeService {
                         return recipeDTO;
                     }).toList());
         } else {
-            if (Boolean.TRUE.equals(isFavorite)){
+            if (Boolean.TRUE.equals(isFavorite)) {
                 filterResult = getAllFavoriteRecipes(email);
             } else {
                 filterResult = getAllRecipes();
@@ -242,6 +247,26 @@ public class RecipeService {
         return recipeRepository.countByPerson_EmailAddress(email);
     }
 
+    private Boolean filterRecipes(Recipe recipe) {
+        return recipe.isPublicRecipe() && RecipeStatus.APPROVED.toString().equals(recipe.getStatus());
+    }
+
+    public List<Recipe> getAllPossibleRecipes() {
+        return recipeRepository.findAll();
+    }
+
+    public Recipe saveRecipeStatus(RecipeStatusDTO dto) {
+        Recipe recipe = getRecipeById(dto.getId());
+
+        if (dto.getStatus().equals("APPROVED")) {
+            recipe.setStatus(RecipeStatus.APPROVED.toString());
+        } else {
+            recipe.setStatus(RecipeStatus.DENIED.toString());
+        }
+
+        return recipeRepository.save(recipe);
+    }
+
     @Transactional
     public Recipe createRecipe(CreateRecipeDTO createRecipeDTO) {
 
@@ -262,6 +287,7 @@ public class RecipeService {
         recipe.setPublicRecipe(createRecipeDTO.getPublicRecipe());
         recipe.setImageAddress(createRecipeDTO.getImageAddress());
         recipe.setPerson(personService.getPersonByName(createRecipeDTO.getOwnerName()));
+        recipe.setStatus(RecipeStatus.WAITING.toString());
         recipe = recipeRepository.save(recipe);
 
         createRecipeIngredientRelations(recipe, createRecipeDTO);

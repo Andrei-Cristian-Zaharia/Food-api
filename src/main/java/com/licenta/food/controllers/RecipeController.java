@@ -2,6 +2,7 @@ package com.licenta.food.controllers;
 
 import com.licenta.food.models.FilterRecipeDTO;
 import com.licenta.food.models.Recipe;
+import com.licenta.food.models.RecipeStatusDTO;
 import com.licenta.food.models.createRequestDTO.AddFavoriteDTO;
 import com.licenta.food.models.createRequestDTO.CreateRecipeDTO;
 import com.licenta.food.models.responseDTO.ResponseRecipeDTO;
@@ -99,6 +100,18 @@ public class RecipeController {
     public @ResponseBody ResponseEntity<List<ResponseRecipeDTO>> filterAllRecipesByIngredients(
             @RequestBody FilterRecipeDTO recipeFilter) {
         return ResponseEntity.ok().body(recipeService.filterAllRecipes(recipeFilter));
+    }
+
+    @GetMapping("/all/possible")
+    public @ResponseBody ResponseEntity<List<Recipe>> getAllPossibleRecipes() {
+
+        return ResponseEntity.ok().body(recipeService.getAllPossibleRecipes());
+    }
+
+    @PostMapping("/save/status")
+    public @ResponseBody ResponseEntity<Recipe> saveStatus(@RequestBody RecipeStatusDTO recipeStatusDTO) {
+
+        return ResponseEntity.ok().body(recipeService.saveRecipeStatus(recipeStatusDTO));
     }
 
     @DeleteMapping("/delete")

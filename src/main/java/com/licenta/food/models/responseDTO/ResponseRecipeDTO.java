@@ -20,6 +20,7 @@ public class ResponseRecipeDTO {
     private boolean isVegan;
     private boolean publicRecipe;
     private String imageAddress;
+    private String status;
     private Integer missingIngredients = 0;
     private Person person;
     private List<IngredientOnRecipeResponseDTO> ingredientList;
