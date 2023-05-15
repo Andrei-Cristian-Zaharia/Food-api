@@ -260,8 +260,10 @@ public class RecipeService {
 
         if (dto.getStatus().equals("APPROVED")) {
             recipe.setStatus(RecipeStatus.APPROVED.toString());
-        } else {
+        } else if (dto.getStatus().equals("DENIED")) {
             recipe.setStatus(RecipeStatus.DENIED.toString());
+        } else {
+            recipe.setStatus(RecipeStatus.WAITING.toString());
         }
 
         return recipeRepository.save(recipe);
