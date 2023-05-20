@@ -11,6 +11,7 @@ public class FilterRecipeDTO {
 
     String recipeName;
     String authorName;
+    String status;
     Integer prepareTimeMin;
     Integer prepareTimeMax;
     Integer rating;

@@ -90,7 +90,6 @@ public class RecipeService {
 
     public List<ResponseRecipeDTO> getAllFavoriteRecipes(String email) {
         return getAllRecipesWithIds(savedRecipesService.getAllRelationsForUserEmail(email)).stream()
-                .filter(this::filterRecipes)
                 .map((Recipe recipe) -> {
                     ResponseRecipeDTO recipeDTO = modelMapper.map(recipe, ResponseRecipeDTO.class);
                     recipeDTO.setIngredientList(recipeIngredientsService.getIngredientsForRecipe(recipe.getId()));
@@ -111,7 +110,6 @@ public class RecipeService {
     public List<ResponseRecipeDTO> getAllRecipes() {
 
         return recipeRepository.findAll().stream()
-                .filter(this::filterRecipes)
                 .map((Recipe recipe) -> {
                     ResponseRecipeDTO recipeDTO = modelMapper.map(recipe, ResponseRecipeDTO.class);
                     recipeDTO.setIngredientList(recipeIngredientsService.getIngredientsForRecipe(recipe.getId()));
@@ -122,7 +120,6 @@ public class RecipeService {
 
     public List<String> getAllFavoriteRecipesNames(String email) {
         return getAllRecipesWithIds(savedRecipesService.getAllRelationsForUserEmail(email)).stream()
-                .filter(this::filterRecipes)
                 .map(Recipe::getName).toList();
     }
 
@@ -150,7 +147,6 @@ public class RecipeService {
         List<ResponseRecipeDTO> filterResult;
         if (filters.getIngredientsNames() != null && !filters.getIngredientsNames().isEmpty()) {
             filterResult = new java.util.ArrayList<>(recipes.stream()
-                    .filter(this::filterRecipes)
                     .filter((Recipe recipe) -> {
                         List<String> recipeIngredients = recipeIngredientsService.getIngredientsForRecipe(recipe.getId())
                                 .stream()
@@ -186,15 +182,21 @@ public class RecipeService {
         }
 
         return filterResult.stream().filter(r -> {
-            if (filters.getDifficulty() != 0 && filters.getDifficulty() != r.getDifficulty()) {
+            if (filters.getDifficulty() != null
+                    && filters.getDifficulty() != 0
+                    && filters.getDifficulty() != r.getDifficulty()) {
                 return false;
             }
 
-            if (filters.getSpiciness() != 0 && filters.getSpiciness() != r.getSpiciness()) {
+            if (filters.getSpiciness() != null
+                    && filters.getSpiciness() != 0
+                    && filters.getSpiciness() != r.getSpiciness()) {
                 return false;
             }
 
-            if (filters.getPrepareTimeMax() < r.getTime() || filters.getPrepareTimeMin() > r.getTime()) {
+            if (filters.getPrepareTimeMax() != null
+                    && filters.getPrepareTimeMin() != null
+                    && (filters.getPrepareTimeMax() < r.getTime() || filters.getPrepareTimeMin() > r.getTime())) {
                 return false;
             }
 
@@ -212,7 +214,13 @@ public class RecipeService {
                 return false;
             }
 
-            if (filters.getRating() != 0) {
+            if (filters.getStatus() != null
+                    && !filters.getStatus().isEmpty()
+                    && !r.getStatus().equals(filters.getStatus())) {
+                return false;
+            }
+
+            if (filters.getRating() != null && filters.getRating() != 0) {
                 try {
                     Integer rating = reviewRestTemplateService.getRatingForRecipe(r.getId());
 
@@ -245,10 +253,6 @@ public class RecipeService {
 
     public Integer countUserRecipes(String email) {
         return recipeRepository.countByPerson_EmailAddress(email);
-    }
-
-    private Boolean filterRecipes(Recipe recipe) {
-        return recipe.isPublicRecipe() && RecipeStatus.APPROVED.toString().equals(recipe.getStatus());
     }
 
     public List<Recipe> getAllPossibleRecipes() {
