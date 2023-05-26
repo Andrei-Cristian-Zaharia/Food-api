@@ -7,19 +7,23 @@ import java.util.List;
 
 public enum IngredientCategory {
 
-    LEGUME("legume"),
-    FRUCTE("fructe"),
-    LACTATE("lactate"),
-    CARNE("carne"),
-    SEMINTE("seminte"),
-    INDULCTORI("îndulcitori"),
-    CEREALE("cereale"),
-    PESTE("pește"),
-    ULEIURI_SI_GRASIMI("uleiuri si grăsimi"),
-    CONDIMENTE("condimente"),
-    PLANTE_SI_VERDEATA("plante si verdeață"),
-    SOSURI("sosuri"),
-    PASTE("paste");
+    vegetable("vegetable"),
+    fruits("fruits"),
+    dairy("dairy"),
+    meat("meat"),
+    nuts_and_seeds("nuts and seeds"),
+    sweeteners("sweeteners"),
+    cereal("cereal"),
+    fish("fish"),
+    oils_and_fats("oils and fats"),
+    spices("spices"),
+    plants_and_greens("plants and greens"),
+    sauces("sauces"),
+    pasta("pasta"),
+    drinks("drinks"),
+    for_cakes("for cakes"),
+    bread("bread"),
+    essences("essences");
 
     private final String displayName;
 

@@ -115,9 +115,7 @@ public class RecipeController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteById(@RequestParam Long id) {
+    public void deleteById(@RequestParam Long id) {
         recipeService.deleteRecipe(id);
-
-        return ResponseEntity.status(HttpStatus.OK).body("Recipe with id " + id + " was deleted.");
     }
 }
