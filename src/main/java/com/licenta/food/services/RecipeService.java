@@ -242,7 +242,7 @@ public class RecipeService {
         }
 
         if (recipeRepository.existsById(addFavoriteDTO.getRecipeId())) {
-            savedRecipesService.existItem(addFavoriteDTO); // checks if the relation already exists
+            savedRecipesService.existItem(addFavoriteDTO);
 
             savedRecipesService.saveNewRelation(addFavoriteDTO.getUserId(), addFavoriteDTO.getRecipeId());
             return true;
